@@ -50,18 +50,16 @@ export default function Completion() {
       return {
         totalCards: stats.totalCards,
         completedCards: stats.completedCards,
-        duration: stats.durationMinutes,
-        accuracy: stats.accuracy,
-        durationSeconds: stats.durationSeconds
+        duration: stats.duration, // This is already in seconds from useStudySession
+        accuracy: stats.accuracy
       };
     }
-    // Fallback if no stats available
+    // Fallback if no stats available - but this shouldn't happen
     return {
       totalCards: flashcards.length,
-      completedCards: flashcards.length,
-      duration: 1,
-      accuracy: 100,
-      durationSeconds: 0
+      completedCards: 0, // Should be 0 if no actual study happened
+      duration: 0, // Should be 0 if no time spent
+      accuracy: 0
     };
   };
 
@@ -73,7 +71,7 @@ export default function Completion() {
       folderId,
       totalCards: sessionStats.totalCards,
       completedCards: sessionStats.completedCards,
-      duration: sessionStats.duration * 60 + sessionStats.durationSeconds, // Convert to total seconds
+      duration: sessionStats.duration, // Already in seconds from useStudySession
       accuracy: sessionStats.accuracy
     };
     

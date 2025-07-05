@@ -29,8 +29,8 @@ export function useStudySession(flashcards: Flashcard[]) {
 
   const nextCard = useCallback(() => {
     if (currentIndex < flashcards.length - 1) {
-      // Mark current card as viewed if both sides were seen
-      if (isFlipped) {
+      // Mark current card as viewed if both sides were seen (card was flipped)
+      if (isFlipped && !cardsViewed.has(currentIndex)) {
         setCardsViewed(prev => {
           const newSet = new Set(prev);
           newSet.add(currentIndex);
@@ -41,7 +41,7 @@ export function useStudySession(flashcards: Flashcard[]) {
       setCurrentIndex(prev => prev + 1);
       setIsFlipped(false);
     }
-  }, [currentIndex, flashcards.length, isFlipped]);
+  }, [currentIndex, flashcards.length, isFlipped, cardsViewed]);
 
   const previousCard = useCallback(() => {
     if (currentIndex > 0) {
@@ -77,17 +77,24 @@ export function useStudySession(flashcards: Flashcard[]) {
     const currentTime = Date.now();
     const duration = Math.floor((currentTime - startTime) / 1000); // in seconds
     const totalCards = flashcards.length;
-    const accuracy = totalCards > 0 ? Math.round((completedCards / totalCards) * 100) : 0;
+    
+    // Count the current card if it was flipped when session ends
+    let finalCompletedCards = completedCards;
+    if (isFlipped && !cardsViewed.has(currentIndex)) {
+      finalCompletedCards += 1;
+    }
+    
+    const accuracy = totalCards > 0 ? Math.round((finalCompletedCards / totalCards) * 100) : 0;
     
     return {
       duration,
       totalCards,
-      completedCards,
+      completedCards: finalCompletedCards,
       accuracy,
       durationMinutes: Math.floor(duration / 60),
       durationSeconds: duration % 60
     };
-  }, [startTime, flashcards.length, completedCards]);
+  }, [startTime, flashcards.length, completedCards, isFlipped, currentIndex, cardsViewed]);
 
   return {
     currentIndex,
