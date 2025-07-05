@@ -50,15 +50,17 @@ export default function Completion() {
       return {
         totalCards: stats.totalCards,
         completedCards: stats.completedCards,
-        duration: stats.duration, // This is already in seconds from useStudySession
+        durationSeconds: stats.duration, // Raw seconds from useStudySession
+        durationMinutes: Math.floor(stats.duration / 60), // Convert to minutes
         accuracy: stats.accuracy
       };
     }
     // Fallback if no stats available - but this shouldn't happen
     return {
       totalCards: flashcards.length,
-      completedCards: 0, // Should be 0 if no actual study happened
-      duration: 0, // Should be 0 if no time spent
+      completedCards: 0,
+      durationSeconds: 0,
+      durationMinutes: 0,
       accuracy: 0
     };
   };
@@ -71,7 +73,7 @@ export default function Completion() {
       folderId,
       totalCards: sessionStats.totalCards,
       completedCards: sessionStats.completedCards,
-      duration: sessionStats.duration, // Already in seconds from useStudySession
+      duration: sessionStats.durationSeconds, // Raw seconds for database storage
       accuracy: sessionStats.accuracy
     };
     
@@ -142,7 +144,7 @@ export default function Completion() {
                   <div className="text-white/70 text-sm">Cards Reviewed</div>
                 </div>
                 <div>
-                  <div className="text-white text-2xl font-bold">{sessionStats.duration}m</div>
+                  <div className="text-white text-2xl font-bold">{sessionStats.durationMinutes}m</div>
                   <div className="text-white/70 text-sm">Minutes</div>
                 </div>
                 <div>
