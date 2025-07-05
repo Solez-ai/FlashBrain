@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertCategorySchema, insertFolderSchema, insertFlashcardSchema, insertStudySessionSchema } from "@shared/schema";
 import { z } from "zod";
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "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";
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -134,6 +134,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!text || !folderId) {
         return res.status(400).json({ message: "Text and folder ID are required" });
+      }
+
+      if (!OPENROUTER_API_KEY) {
+        return res.status(500).json({ message: "OpenRouter API key not configured" });
       }
 
       const prompt = `
