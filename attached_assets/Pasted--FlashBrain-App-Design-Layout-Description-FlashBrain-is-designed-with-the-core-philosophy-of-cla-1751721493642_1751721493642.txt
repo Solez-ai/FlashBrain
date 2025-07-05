@@ -1,0 +1,14 @@
+🧠 FlashBrain App Design & Layout Description
+FlashBrain is designed with the core philosophy of clarity, elegance, and mental focus. The app should feel light, minimal, and calming, like an organized digital notebook rather than a loud, chaotic tech interface. The entire UI should be distraction-free to help students stay in flow during study sessions. Visual hierarchy is key: content should breathe, sections should be clearly separated with padding and soft contrast, and the entire interface must feel modern and welcoming, never clinical or overwhelming.
+
+Typography should be legible and friendly. A font like Lexend (or similar rounded sans-serif) should be used throughout the app. Font weight and sizing should help distinguish between headings, subheadings, and content. Never use more than two font sizes in a component. Cards should have a dynamic text size that scales down only when necessary (e.g., when over 30 words) — always prioritize readability over cramming in content.
+
+The home screen should be welcoming, with a subtle icon or illustration (like a brain, light bulb, or spark) and a headline like “Welcome to FlashBrain”. Below that, two large buttons: “Create Flashcards Manually” and “Generate with AI”. These buttons must feel tappable and modern — wide, elevated, and color-differentiated (primary purple for manual, yellow or outlined for AI). There should also be a “My Study Folders” section below — showing folders in colored cards with a label, subject icon, and number of cards.
+
+Flashcard folders should appear like sticky notes or lightweight cards — color-coded by user choice (yellow, pink, white). Each should show its category, folder name, and number of flashcards. When a folder is opened, a clean list/grid of flashcards appears. Flashcards themselves should animate smoothly in and out (fade + slide), and tapping one enters Presentation Mode: the card slides in with a flip animation. The card has two sides (question/answer), with a tap or swipe revealing the answer.
+
+In Presentation Mode, allow the user to flip, go next/previous, or set autoplay (3s, 5s, 10s). After the session, display a congratulatory modal with confetti animation and a soft gradient background like “🎉 Great work! Keep practicing.”
+
+Inputs, modals, alerts, and popups should all maintain the soft-paper aesthetic. Focus indicators must be visible but not overly bright. Transitions should be smooth, not snappy — always using ease-in-out or spring curves. Interactions must feel organic and responsive.
+
+The entire app must be mobile-first, using safe-area insets for edge spacing, and all buttons, inputs, and cards must be optimized for touch. Nothing should feel crammed — use vertical spacing (gap: 12px+) to give the brain room to breathe.

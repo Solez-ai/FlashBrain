@@ -1,0 +1,134 @@
+# 📚 FlashBrain – Context for Cursor AI
+An intelligent, simple, and beautiful flashcard creation app designed specifically for **students** to **remember faster** and **study smarter**. Built using **Expo + React Native**, with **AI integration via OpenRouter**.
+
+---
+
+## ⚙️ CORE FEATURES OVERVIEW
+
+### ++ Dual Flashcard Creation Modes:
+1. **Manual Flashcard Creation**
+2. **AI Flashcard Generation from Text**
+
+---
+
+## 🛠 MANUAL FLASHCARD CREATION
+
+### -- How it Works:
+- User clicks **"Create Flash Card (Manual)"**.
+- Can create **unlimited cards**.
+- Card creation happens **inside folders** and **categories**.
+- Each card:
+  - Has a **50-word max**.
+  - Text shrinks dynamically as user types more.
+  - Can customize **paper style**: `Yellow`, `Pink`, or `Plain White (default)`.
+  - Uses a **readable, elegant font**.
+  - UI has **rounded corners** like paper.
+
+### -- Flashcard Display (Present Mode):
+- User can:
+  - Use **arrow buttons** to go forward/backward (default).
+  - OR set **timer-based autoplay** (3s / 5s / etc).
+- **Transitions**:
+  - Flashcards animate in/out with **easing + fade effect**.
+- At end of session, show:
+  - “✅ Well done!” popup with option to go back.
+
+---
+
+## 🤖 AI FLASHCARD GENERATION (WITH OPENROUTER)
+
+### -- How it Works:
+- User clicks **"Flash Cards with AI"**.
+- Can **paste unlimited text** into a big input field.
+- Uses this **OpenRouter API call** (DeepSeek):
+
+```bash
+curl https://openrouter.ai/api/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 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" \
+  -d '{
+    "model": "deepseek/deepseek-r1-0528:free",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is the meaning of life?"
+      }
+    ]
+  }'
+-- AI Instructions:
+Analyze full study material.
+
+Generate concise flashcards.
+
+Each flashcard should have:
+
+A question and an answer.
+
+Max 10 words per side.
+
+Output structured in [ { question: "...", answer: "..." } ] format.
+
+-- Folder & Storage Behavior:
+Same folders/categories used for both manual and AI cards.
+
+No duplicate folder systems.
+
+Cards are saved into chosen folder/category directly.
+
+🗂 ORGANIZATION STRUCTURE
+Folders & Categories System:
+On first open, user sees an empty dashboard.
+
+They must:
+
+Create a Category (e.g. "Science", "Math")
+
+Then create a Folder inside it (e.g. "Chapter 3 – Atoms")
+
+Then tap + to:
+
+Create flashcards manually
+
+OR generate via AI
+
+Folder Features:
+Allow color-coding (example: blue = math, yellow = bio).
+
+Optionally rename or delete folders later.
+
+Organize flashcards inside these folders.
+
+🎨 UI/UX / FRONTEND DESIGN
+Flashcard Design:
+Rounded, card-style container (paper look)
+
+Dynamic text sizing:
+
+Shrinks smoothly as words increase (up to 50)
+
+Background Themes:
+
+Yellow, Pink, or White
+
+Font:
+
+Must be clean, readable, and aesthetic (e.g. Inter, Lexend)
+
+Flashcard Navigation:
+Manual Mode:
+
+Arrows to go forward/back
+
+Auto Mode:
+
+Timer interval chosen by user
+
+Cards autoplay with easing + fade transitions
+
+General UI Guidelines:
+Use smooth, soft shadows
+
+Animations must feel light, responsive, and friendly
+
+Prioritize speed and mobile usability
+

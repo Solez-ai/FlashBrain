@@ -1,0 +1,26 @@
+The App is Called Flash Brain, It is an App For Students For Quick Remebring and WHatever Reason They Make Flash Cards, The Apps Main Feature Will be To Make Flash Cards, It Will have a Nice UI, Where There Will be 2 Buttons, Create Flash Card (Manual), Here The student Can Create Card Manually Upto How Many Cards They Could Ever Want, They Can Also Create Folders and Color Code Them For Differnt Subjects They can Also make Categories Where They can Put the Folders, The Flash Card UI itself Will Look very Cool, It Will be a Rounded Paper Like Thing With a 50 Word Limit, The Text Will Get Samller Gradually When It Keeps Getting Bigger Until 50 Words, it Will ise a Nice Easy to Read Good Looking Understanding Font, The Syudent Can Also Change The paper Background To Something Like Yellow, Pink or Plain White (Default) , So After the Student Finishes They Can Click Save And it Will be Saved As a Lot of Flahs Cards, So The Student Can Click Ona Button Called Present, And It Will Appear Out the Flash Cards One By One Either a Set timer By the Student Like 3 or 5 Seconds or By Manually Pressing an Arrow (Default) So the Flahs Cards Will Come Out One By One With a Nice Easing in and Out Along with a Fade Mixed in Type of Transiition So It Looks Nice, adn When The Sudent Is Finished With Everything, A message Will Pop up Saying Well done, Remebr An Arrow to Go Back to A Prevoius FlahsCard will Also be Implemented, Anyways 2nd Button is Flash Cards With Ai And here Student Can Paste a LOT OF TEXT on to The Field with No Limits and Click generate flashcards and it Will Use A Free Open Router Model, Code 
+
+curl https://openrouter.ai/api/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $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" \
+  -d '{
+  "model": "deepseek/deepseek-r1-0528:free",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the meaning of life?"
+    }
+  ]
+  
+}'
+
+Api key - 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
+
+And Then Deepseek Can Analyze The WHOLE TEXT and Generate Samrt Flahs Cards, The Amount of Flash Cards Will Depepnd On How Big the Pasted Text The Student Gave, Make Sure to Insturct The Ai Some Rules While Genrating the Flash Card Like trying not to go over 10 Words on a Single Card
+And The Flash Card UI, UX, GUI etc Will the Be same as the Manual, And Also Remeber The Folders I talked About Will Be The Same No ifferent Folders or Dashbaords For the 2 modes
+
+When The Sudent first Opens The App It Will See an Empyt Directory Where The Srudetn needs to make a Folder or Catergory and Open That and Hit the Plus + Button and Then It will Get The Option To Create the Flashcards
+
+Also i am Using Cursor and Expo For this
+
+Remebr The Data I gave You May Not be Enough As I maybe Forgot on Some Crucial Steps or Setting sBut I pretty Much Gave You The COncept of My App, Not Genratae a Nice and Clean text To Instruct thr Cursor AI for my CONTEXT.md File Use ##, ###, #, --, -, $$, $, @, !!!!, ++, And etc Symbols For Better Understanding of Cursor AI You May Also Use Markdown
