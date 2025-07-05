@@ -163,7 +163,7 @@ export default function Completion() {
                 <h3 className="text-white font-semibold">Keep Learning!</h3>
                 <Sparkles className="h-5 w-5 text-yellow-400 ml-2" />
               </div>
-              <p className="text-white/80 text-sm">
+              <p className="text-sm text-[#000000cc]">
                 Consistency is key to mastering any subject. Great job on completing this session!
               </p>
             </CardContent>
