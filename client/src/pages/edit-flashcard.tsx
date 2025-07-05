@@ -78,7 +78,7 @@ export default function EditFlashcard() {
   });
 
   const handleUpdateFlashcard = async () => {
-    if (!question.trim() || !answer.trim()) {
+    if (!(question || "").trim() || !(answer || "").trim()) {
       toast({
         title: "Error",
         description: "Both question and answer are required.",
@@ -88,8 +88,8 @@ export default function EditFlashcard() {
     }
     
     updateFlashcardMutation.mutate({
-      question: question.trim(),
-      answer: answer.trim(),
+      question: (question || "").trim(),
+      answer: (answer || "").trim(),
       cardStyle
     });
   };
@@ -190,7 +190,7 @@ export default function EditFlashcard() {
                   Question/Front Side
                 </Label>
                 <Textarea
-                  value={question}
+                  value={question || ""}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="Enter your question..."
                   className="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 border-white/20 focus:border-white/60 resize-none"
@@ -198,7 +198,7 @@ export default function EditFlashcard() {
                   maxLength={200}
                 />
                 <div className="text-right text-white/60 text-xs mt-1">
-                  {question.length}/200 characters
+                  {(question || "").length}/200 characters
                 </div>
               </div>
 
@@ -208,7 +208,7 @@ export default function EditFlashcard() {
                   Answer/Back Side
                 </Label>
                 <Textarea
-                  value={answer}
+                  value={answer || ""}
                   onChange={(e) => setAnswer(e.target.value)}
                   placeholder="Enter your answer..."
                   className="w-full p-4 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 border-white/20 focus:border-white/60 resize-none"
@@ -216,7 +216,7 @@ export default function EditFlashcard() {
                   maxLength={200}
                 />
                 <div className="text-right text-white/60 text-xs mt-1">
-                  {answer.length}/200 characters
+                  {(answer || "").length}/200 characters
                 </div>
               </div>
 
@@ -244,7 +244,7 @@ export default function EditFlashcard() {
                 </Button>
                 <Button
                   onClick={handleUpdateFlashcard}
-                  disabled={!question.trim() || !answer.trim() || updateFlashcardMutation.isPending}
+                  disabled={!(question || "").trim() || !(answer || "").trim() || updateFlashcardMutation.isPending}
                   className="flex-1 bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-xl font-semibold touch-btn"
                 >
                   <Save className="mr-2 h-4 w-4" />
