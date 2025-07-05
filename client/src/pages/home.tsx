@@ -16,7 +16,7 @@ export default function Home() {
   });
 
   const { data: folders = [] } = useQuery<Folder[]>({
-    queryKey: ["/api/folders"],
+    queryKey: ["/api/folders", "all", categories.map(c => c.id)],
     queryFn: async () => {
       const allFolders = [];
       for (const category of categories) {
@@ -29,7 +29,7 @@ export default function Home() {
   });
 
   const { data: allFlashcards = [] } = useQuery<Flashcard[]>({
-    queryKey: ["/api/flashcards"],
+    queryKey: ["/api/flashcards", "all", folders.map(f => f.id)],
     queryFn: async () => {
       const allCards = [];
       for (const folder of folders) {
@@ -42,7 +42,7 @@ export default function Home() {
   });
 
   const { data: allStudySessions = [] } = useQuery<StudySession[]>({
-    queryKey: ["/api/study-sessions"],
+    queryKey: ["/api/study-sessions", "all", folders.map(f => f.id)],
     queryFn: async () => {
       const allSessions = [];
       for (const folder of folders) {
