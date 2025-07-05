@@ -58,20 +58,31 @@ export default function Home() {
     enabled: folders.length > 0
   });
 
-  // Calculate today's statistics
+  // Calculate today's statistics with accurate data
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
   const todaySessions = allStudySessions.filter(session => {
     if (!session.createdAt) return false;
     const sessionDate = new Date(session.createdAt);
-    sessionDate.setHours(0, 0, 0, 0);
-    return sessionDate.getTime() === today.getTime();
+    return sessionDate >= today && sessionDate < tomorrow;
   });
 
   const totalCards = allFlashcards.length;
   const totalFolders = folders.length;
-  const todayStudyTime = todaySessions.reduce((total, session) => total + Math.floor(session.duration / 60), 0);
-  const cardsStudiedToday = todaySessions.reduce((total, session) => total + session.completedCards, 0);
+  
+  // Calculate study time in minutes (duration is in seconds)
+  const todayStudyTime = todaySessions.reduce((total, session) => {
+    const durationInMinutes = Math.round(session.duration / 60);
+    return total + durationInMinutes;
+  }, 0);
+  
+  // Calculate total cards studied today
+  const cardsStudiedToday = todaySessions.reduce((total, session) => {
+    return total + (session.completedCards || 0);
+  }, 0);
 
   return (
     <div className="min-h-screen animate-fade-in">
@@ -171,15 +182,15 @@ export default function Home() {
             <h3 className="text-white text-lg font-semibold mb-4">Today's Progress</h3>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-white text-2xl font-bold">{cardsStudiedToday}</div>
+                <div className="text-white text-2xl font-bold">{cardsStudiedToday || 0}</div>
                 <div className="text-white/70 text-sm">Cards Studied</div>
               </div>
               <div>
-                <div className="text-white text-2xl font-bold">{todaySessions.length}</div>
+                <div className="text-white text-2xl font-bold">{todaySessions.length || 0}</div>
                 <div className="text-white/70 text-sm">Study Sessions</div>
               </div>
               <div>
-                <div className="text-white text-2xl font-bold">{todayStudyTime}m</div>
+                <div className="text-white text-2xl font-bold">{todayStudyTime || 0}m</div>
                 <div className="text-white/70 text-sm">Study Time</div>
               </div>
             </div>
