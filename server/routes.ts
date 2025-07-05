@@ -102,6 +102,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/flashcards/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertFlashcardSchema.partial().parse(req.body);
+      const flashcard = await storage.updateFlashcard(id, validatedData);
+      res.json(flashcard);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid flashcard data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Failed to update flashcard" });
+      }
+    }
+  });
+
   app.delete("/api/flashcards/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);

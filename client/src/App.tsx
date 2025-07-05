@@ -8,6 +8,7 @@ import Categories from "@/pages/categories";
 import Folders from "@/pages/folders";
 import Flashcards from "@/pages/flashcards";
 import CreateFlashcard from "@/pages/create-flashcard";
+import EditFlashcard from "@/pages/edit-flashcard";
 import CreateAI from "@/pages/create-ai";
 import StudySession from "@/pages/study-session";
 import Completion from "@/pages/completion";
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/folders/:categoryId" component={Folders} />
       <Route path="/flashcards/:folderId" component={Flashcards} />
       <Route path="/create-flashcard/:folderId" component={CreateFlashcard} />
+      <Route path="/edit-flashcard/:flashcardId" component={EditFlashcard} />
       <Route path="/create-ai" component={CreateAI} />
       <Route path="/study/:folderId" component={StudySession} />
       <Route path="/completion/:folderId" component={Completion} />

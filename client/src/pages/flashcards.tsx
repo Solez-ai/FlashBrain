@@ -1,14 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Play, Plus, Edit, Trash2, Clock } from "lucide-react";
 import NavigationHeader from "@/components/navigation-header";
-import { apiGet } from "@/lib/api";
+import { apiGet, apiDelete } from "@/lib/api";
+import { queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Folder, Flashcard } from "@shared/schema";
 
 export default function Flashcards() {
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   
   // Extract folderId from URL
   const folderId = parseInt(window.location.pathname.split('/')[2]);
@@ -30,6 +33,30 @@ export default function Flashcards() {
     queryKey: ["/api/flashcards", folderId],
     queryFn: () => apiGet(`/api/flashcards/folder/${folderId}`)
   });
+
+  const deleteFlashcardMutation = useMutation({
+    mutationFn: (id: number) => apiDelete(`/api/flashcards/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/flashcards", folderId] });
+      toast({
+        title: "Success",
+        description: "Flashcard deleted successfully!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete flashcard. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleDeleteFlashcard = (id: number) => {
+    if (confirm("Are you sure you want to delete this flashcard?")) {
+      deleteFlashcardMutation.mutate(id);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -139,6 +166,7 @@ export default function Flashcards() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => navigate(`/edit-flashcard/${flashcard.id}`)}
                         className="text-white/60 hover:text-white hover:bg-white/10"
                       >
                         <Edit className="h-4 w-4" />
@@ -146,7 +174,9 @@ export default function Flashcards() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-white/60 hover:text-white hover:bg-white/10"
+                        onClick={() => handleDeleteFlashcard(flashcard.id)}
+                        disabled={deleteFlashcardMutation.isPending}
+                        className="text-white/60 hover:text-red-400 hover:bg-white/10"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

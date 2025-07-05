@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft } from "lucide-react";
 import NavigationHeader from "@/components/navigation-header";
 import FlashcardComponent from "@/components/flashcard";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPut } from "@/lib/api";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { Folder, Flashcard } from "@shared/schema";
+import type { Flashcard } from "@shared/schema";
 
 const CARD_STYLES = [
   { name: "Yellow", value: "yellow" },
@@ -21,7 +21,7 @@ const CARD_STYLES = [
   { name: "White", value: "white" },
 ];
 
-export default function CreateFlashcard() {
+export default function EditFlashcard() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [question, setQuestion] = useState("");
@@ -29,42 +29,55 @@ export default function CreateFlashcard() {
   const [cardStyle, setCardStyle] = useState("white");
   const [previewFlipped, setPreviewFlipped] = useState(false);
   
-  // Extract folderId from URL
-  const folderId = parseInt(window.location.pathname.split('/')[2]);
+  // Extract flashcardId from URL
+  const flashcardId = parseInt(window.location.pathname.split('/')[2]);
   
-  const { data: folder } = useQuery<Folder>({
-    queryKey: ["/api/folders", folderId],
+  const { data: flashcard, isLoading } = useQuery<Flashcard>({
+    queryKey: ["/api/flashcards", flashcardId],
     queryFn: async () => {
       const categories = await apiGet("/api/categories");
       for (const category of categories) {
         const folders = await apiGet(`/api/folders/category/${category.id}`);
-        const foundFolder = folders.find((f: Folder) => f.id === folderId);
-        if (foundFolder) return foundFolder;
+        for (const folder of folders) {
+          const flashcards = await apiGet(`/api/flashcards/folder/${folder.id}`);
+          const foundFlashcard = flashcards.find((f: Flashcard) => f.id === flashcardId);
+          if (foundFlashcard) return foundFlashcard;
+        }
       }
       return null;
     }
   });
 
-  const createFlashcardMutation = useMutation({
-    mutationFn: (data: { question: string; answer: string; folderId: number; cardStyle: string }) => 
-      apiPost("/api/flashcards", data),
+  // Set form values when flashcard data loads
+  useEffect(() => {
+    if (flashcard) {
+      setQuestion(flashcard.question);
+      setAnswer(flashcard.answer);
+      setCardStyle(flashcard.cardStyle);
+    }
+  }, [flashcard]);
+
+  const updateFlashcardMutation = useMutation({
+    mutationFn: (data: { question: string; answer: string; cardStyle: string }) => 
+      apiPut(`/api/flashcards/${flashcardId}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/flashcards", folderId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/flashcards"] });
       toast({
         title: "Success",
-        description: "Flashcard created successfully!",
+        description: "Flashcard updated successfully!",
       });
+      navigate(`/flashcards/${flashcard?.folderId}`);
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to create flashcard. Please try again.",
+        description: "Failed to update flashcard. Please try again.",
         variant: "destructive",
       });
     }
   });
 
-  const handleCreateFlashcard = async (continueCreating = false) => {
+  const handleUpdateFlashcard = async () => {
     if (!question.trim() || !answer.trim()) {
       toast({
         title: "Error",
@@ -74,48 +87,72 @@ export default function CreateFlashcard() {
       return;
     }
     
-    await createFlashcardMutation.mutateAsync({
+    updateFlashcardMutation.mutate({
       question: question.trim(),
       answer: answer.trim(),
-      folderId,
       cardStyle
     });
-
-    if (continueCreating) {
-      // Reset form for next card
-      setQuestion("");
-      setAnswer("");
-      setCardStyle("white");
-      setPreviewFlipped(false);
-    } else {
-      // Navigate back to flashcards list
-      navigate(`/flashcards/${folderId}`);
-    }
-  };
-
-  const getTextSize = (text: string) => {
-    const length = text.length;
-    if (length < 20) return "text-lg";
-    if (length < 40) return "text-base";
-    return "text-sm";
   };
 
   // Create preview flashcard
   const previewFlashcard: Flashcard = {
-    id: 0,
+    id: flashcardId,
     question: question || "Your question will appear here...",
     answer: answer || "Your answer will appear here...",
-    folderId,
+    folderId: flashcard?.folderId || 0,
     cardStyle,
-    createdAt: new Date()
+    createdAt: flashcard?.createdAt || new Date()
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen animate-fade-in">
+        <NavigationHeader title="Loading..." showBack backTo="/" />
+        <div className="px-4 pt-8">
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-6">
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 bg-white/20 rounded w-3/4"></div>
+                <div className="h-20 bg-white/20 rounded"></div>
+                <div className="h-20 bg-white/20 rounded"></div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (!flashcard) {
+    return (
+      <div className="min-h-screen animate-fade-in">
+        <NavigationHeader title="Flashcard Not Found" showBack backTo="/" />
+        <div className="px-4 pt-8">
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardContent className="p-8 text-center">
+              <h3 className="text-white font-semibold mb-2">Flashcard Not Found</h3>
+              <p className="text-white/70 mb-4">
+                The flashcard you're looking for doesn't exist.
+              </p>
+              <Button
+                onClick={() => navigate("/")}
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
+                Go Home
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen animate-fade-in">
       <NavigationHeader 
-        title="Create Flashcard" 
+        title="Edit Flashcard" 
         showBack 
-        backTo={`/flashcards/${folderId}`}
+        backTo={`/flashcards/${flashcard.folderId}`}
       />
       
       <main className="px-4 pb-8">
@@ -198,20 +235,20 @@ export default function CreateFlashcard() {
               {/* Action Buttons */}
               <div className="flex space-x-3">
                 <Button
-                  onClick={() => handleCreateFlashcard(false)}
-                  disabled={!question.trim() || !answer.trim() || createFlashcardMutation.isPending}
-                  className="flex-1 bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-xl font-semibold touch-btn"
+                  onClick={() => navigate(`/flashcards/${flashcard.folderId}`)}
+                  variant="outline"
+                  className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20 py-3 px-4 rounded-xl font-semibold touch-btn"
                 >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Card
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Cancel
                 </Button>
                 <Button
-                  onClick={() => handleCreateFlashcard(true)}
-                  disabled={!question.trim() || !answer.trim() || createFlashcardMutation.isPending}
-                  className="flex-1 bg-accent hover:bg-accent/90 text-white py-3 px-4 rounded-xl font-semibold touch-btn"
+                  onClick={handleUpdateFlashcard}
+                  disabled={!question.trim() || !answer.trim() || updateFlashcardMutation.isPending}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-xl font-semibold touch-btn"
                 >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create & Continue
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
                 </Button>
               </div>
             </div>

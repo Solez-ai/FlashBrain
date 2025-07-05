@@ -27,7 +27,7 @@ export function useStudySession(flashcards: Flashcard[]) {
 
   const nextCard = useCallback(() => {
     if (currentIndex < flashcards.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
       setIsFlipped(false);
     }
   }, [currentIndex, flashcards.length]);
