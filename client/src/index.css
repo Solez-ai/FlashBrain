@@ -134,28 +134,33 @@
   }
 
   .folder-yellow {
-    background-color: var(--folder-yellow);
-    color: hsl(45, 93%, 27%);
+    background-color: var(--folder-yellow) !important;
+    color: hsl(45, 93%, 27%) !important;
+    border-color: hsl(45, 93%, 60%) !important;
   }
 
   .folder-pink {
-    background-color: var(--folder-pink);
-    color: hsl(0, 93%, 27%);
+    background-color: var(--folder-pink) !important;
+    color: hsl(0, 93%, 27%) !important;
+    border-color: hsl(0, 93%, 60%) !important;
   }
 
   .folder-blue {
-    background-color: var(--folder-blue);
-    color: hsl(215, 93%, 27%);
+    background-color: var(--folder-blue) !important;
+    color: hsl(215, 93%, 27%) !important;
+    border-color: hsl(215, 93%, 60%) !important;
   }
 
   .folder-green {
-    background-color: var(--folder-green);
-    color: hsl(142, 93%, 27%);
+    background-color: var(--folder-green) !important;
+    color: hsl(142, 93%, 27%) !important;
+    border-color: hsl(142, 93%, 60%) !important;
   }
 
   .folder-white {
-    background-color: hsl(0, 0%, 100%);
-    color: hsl(0, 0%, 20%);
+    background-color: hsl(0, 0%, 100%) !important;
+    color: hsl(0, 0%, 20%) !important;
+    border-color: hsl(0, 0%, 80%) !important;
   }
 
   .animate-fade-in {

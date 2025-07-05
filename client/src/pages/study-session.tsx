@@ -42,15 +42,20 @@ export default function StudySession() {
     isAutoPlay,
     autoPlayInterval,
     startTime,
+    completedCards,
     nextCard,
     previousCard,
     flipCard,
     setAutoPlay,
     pauseAutoPlay,
-    resetSession
+    resetSession,
+    getSessionStats
   } = useStudySession(flashcards);
 
   const handleExitSession = () => {
+    const stats = getSessionStats();
+    // Store session stats in localStorage for the completion page
+    localStorage.setItem('lastSessionStats', JSON.stringify(stats));
     navigate(`/completion/${folderId}`);
   };
 

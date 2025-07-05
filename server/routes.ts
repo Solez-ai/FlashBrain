@@ -218,6 +218,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Study Sessions
+  app.get("/api/study-sessions/folder/:folderId", async (req, res) => {
+    try {
+      const folderId = parseInt(req.params.folderId);
+      const sessions = await storage.getStudySessionsByFolder(folderId);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch study sessions" });
+    }
+  });
+
   app.post("/api/study-sessions", async (req, res) => {
     try {
       const validatedData = insertStudySessionSchema.parse(req.body);

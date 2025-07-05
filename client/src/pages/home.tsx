@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import { Plus, Bot, Lightbulb, ChevronRight } from "lucide-react";
 import NavigationHeader from "@/components/navigation-header";
 import { apiGet } from "@/lib/api";
-import type { Category, Folder, Flashcard } from "@shared/schema";
+import type { Category, Folder, Flashcard, StudySession } from "@shared/schema";
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -41,9 +41,37 @@ export default function Home() {
     enabled: folders.length > 0
   });
 
+  const { data: allStudySessions = [] } = useQuery<StudySession[]>({
+    queryKey: ["/api/study-sessions"],
+    queryFn: async () => {
+      const allSessions = [];
+      for (const folder of folders) {
+        try {
+          const folderSessions = await apiGet(`/api/study-sessions/folder/${folder.id}`);
+          allSessions.push(...folderSessions);
+        } catch (error) {
+          // Continue if folder has no sessions
+        }
+      }
+      return allSessions;
+    },
+    enabled: folders.length > 0
+  });
+
+  // Calculate today's statistics
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todaySessions = allStudySessions.filter(session => {
+    if (!session.createdAt) return false;
+    const sessionDate = new Date(session.createdAt);
+    sessionDate.setHours(0, 0, 0, 0);
+    return sessionDate.getTime() === today.getTime();
+  });
+
   const totalCards = allFlashcards.length;
   const totalFolders = folders.length;
-  const studyTime = Math.floor(totalCards * 0.5); // Rough estimate
+  const todayStudyTime = todaySessions.reduce((total, session) => total + Math.floor(session.duration / 60), 0);
+  const cardsStudiedToday = todaySessions.reduce((total, session) => total + session.completedCards, 0);
 
   return (
     <div className="min-h-screen animate-fade-in">
@@ -140,21 +168,26 @@ export default function Home() {
         {/* Quick Stats */}
         <Card className="bg-white/10 backdrop-blur-sm border-white/20">
           <CardContent className="p-6">
-            <h3 className="text-white text-lg font-semibold mb-4">Your Progress</h3>
+            <h3 className="text-white text-lg font-semibold mb-4">Today's Progress</h3>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-white text-2xl font-bold">{totalCards}</div>
-                <div className="text-white/70 text-sm">Total Cards</div>
+                <div className="text-white text-2xl font-bold">{cardsStudiedToday}</div>
+                <div className="text-white/70 text-sm">Cards Studied</div>
               </div>
               <div>
-                <div className="text-white text-2xl font-bold">{totalFolders}</div>
-                <div className="text-white/70 text-sm">Folders</div>
+                <div className="text-white text-2xl font-bold">{todaySessions.length}</div>
+                <div className="text-white/70 text-sm">Study Sessions</div>
               </div>
               <div>
-                <div className="text-white text-2xl font-bold">{studyTime}m</div>
+                <div className="text-white text-2xl font-bold">{todayStudyTime}m</div>
                 <div className="text-white/70 text-sm">Study Time</div>
               </div>
             </div>
+            {todaySessions.length === 0 && (
+              <div className="mt-4 p-3 bg-white/5 rounded-lg text-center">
+                <p className="text-white/60 text-sm">No study sessions today yet. Start studying to see your progress!</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>

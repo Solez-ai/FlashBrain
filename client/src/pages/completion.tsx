@@ -42,17 +42,45 @@ export default function Completion() {
     }
   });
 
-  useEffect(() => {
-    // Create a study session record
-    const sessionData = {
-      folderId,
+  // Get real session stats from localStorage
+  const getSessionStats = () => {
+    const storedStats = localStorage.getItem('lastSessionStats');
+    if (storedStats) {
+      const stats = JSON.parse(storedStats);
+      return {
+        totalCards: stats.totalCards,
+        completedCards: stats.completedCards,
+        duration: stats.durationMinutes,
+        accuracy: stats.accuracy,
+        durationSeconds: stats.durationSeconds
+      };
+    }
+    // Fallback if no stats available
+    return {
       totalCards: flashcards.length,
       completedCards: flashcards.length,
-      duration: Math.floor(Math.random() * 300) + 60, // Random duration between 1-6 minutes
-      accuracy: Math.floor(Math.random() * 30) + 70 // Random accuracy between 70-100%
+      duration: 1,
+      accuracy: 100,
+      durationSeconds: 0
+    };
+  };
+
+  const sessionStats = getSessionStats();
+
+  useEffect(() => {
+    // Create a study session record with real data
+    const sessionData = {
+      folderId,
+      totalCards: sessionStats.totalCards,
+      completedCards: sessionStats.completedCards,
+      duration: sessionStats.duration * 60 + sessionStats.durationSeconds, // Convert to total seconds
+      accuracy: sessionStats.accuracy
     };
     
     createStudySessionMutation.mutate(sessionData);
+
+    // Clear the stored stats after using them
+    localStorage.removeItem('lastSessionStats');
 
     // Hide confetti after animation
     const timer = setTimeout(() => {
@@ -60,7 +88,7 @@ export default function Completion() {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [folderId, flashcards.length]);
+  }, [folderId]);
 
   const handleRestartSession = () => {
     navigate(`/study/${folderId}`);
@@ -72,13 +100,6 @@ export default function Completion() {
 
   const handleBackToHome = () => {
     navigate("/");
-  };
-
-  // Mock session stats (in a real app, these would come from the study session)
-  const sessionStats = {
-    totalCards: flashcards.length,
-    duration: Math.floor(Math.random() * 5) + 3, // 3-8 minutes
-    accuracy: Math.floor(Math.random() * 30) + 70 // 70-100%
   };
 
   return (

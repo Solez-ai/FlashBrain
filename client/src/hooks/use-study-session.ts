@@ -7,6 +7,8 @@ export function useStudySession(flashcards: Flashcard[]) {
   const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [autoPlayInterval, setAutoPlayInterval] = useState<number | null>(null);
   const [startTime] = useState(Date.now());
+  const [completedCards, setCompletedCards] = useState(0);
+  const [cardsViewed, setCardsViewed] = useState(new Set<number>());
 
   // Auto-play functionality
   useEffect(() => {
@@ -27,10 +29,19 @@ export function useStudySession(flashcards: Flashcard[]) {
 
   const nextCard = useCallback(() => {
     if (currentIndex < flashcards.length - 1) {
+      // Mark current card as viewed if both sides were seen
+      if (isFlipped) {
+        setCardsViewed(prev => {
+          const newSet = new Set(prev);
+          newSet.add(currentIndex);
+          return newSet;
+        });
+        setCompletedCards(prev => prev + 1);
+      }
       setCurrentIndex(prev => prev + 1);
       setIsFlipped(false);
     }
-  }, [currentIndex, flashcards.length]);
+  }, [currentIndex, flashcards.length, isFlipped]);
 
   const previousCard = useCallback(() => {
     if (currentIndex > 0) {
@@ -58,7 +69,25 @@ export function useStudySession(flashcards: Flashcard[]) {
     setIsFlipped(false);
     setIsAutoPlay(false);
     setAutoPlayInterval(null);
+    setCompletedCards(0);
+    setCardsViewed(new Set());
   }, []);
+
+  const getSessionStats = useCallback(() => {
+    const currentTime = Date.now();
+    const duration = Math.floor((currentTime - startTime) / 1000); // in seconds
+    const totalCards = flashcards.length;
+    const accuracy = totalCards > 0 ? Math.round((completedCards / totalCards) * 100) : 0;
+    
+    return {
+      duration,
+      totalCards,
+      completedCards,
+      accuracy,
+      durationMinutes: Math.floor(duration / 60),
+      durationSeconds: duration % 60
+    };
+  }, [startTime, flashcards.length, completedCards]);
 
   return {
     currentIndex,
@@ -66,11 +95,13 @@ export function useStudySession(flashcards: Flashcard[]) {
     isAutoPlay,
     autoPlayInterval,
     startTime,
+    completedCards,
     nextCard,
     previousCard,
     flipCard,
     setAutoPlay,
     pauseAutoPlay,
-    resetSession
+    resetSession,
+    getSessionStats
   };
 }
