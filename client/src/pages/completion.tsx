@@ -122,7 +122,6 @@ export default function Completion() {
           </div>
         </div>
       )}
-
       <main className="px-4 py-8">
         <div className="text-center py-8">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce-gentle">
@@ -158,7 +157,7 @@ export default function Completion() {
 
           {/* Motivational Message */}
           <Card className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm border-white/20 mb-8">
-            <CardContent className="p-6">
+            <CardContent className="p-6 text-[#000000] bg-[#00000000]">
               <div className="flex items-center justify-center mb-3">
                 <Sparkles className="h-5 w-5 text-yellow-400 mr-2" />
                 <h3 className="text-white font-semibold">Keep Learning!</h3>
