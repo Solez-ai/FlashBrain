@@ -27,7 +27,7 @@ export default function CreateAI() {
   });
 
   const { data: allFolders = [] } = useQuery<Folder[]>({
-    queryKey: ["/api/folders"],
+    queryKey: ["/api/folders", "all", categories.map(c => c.id)],
     queryFn: async () => {
       const allFolders = [];
       for (const category of categories) {
