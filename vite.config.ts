@@ -9,18 +9,20 @@ export default defineConfig(async ({ mode }) => {
     react(),
     runtimeErrorOverlay(),
     ...(mode !== "production" && process.env.REPL_ID !== undefined
-      ? [
-          (await import("@replit/vite-plugin-cartographer")).cartographer(),
-        ]
+      ? [(await import("@replit/vite-plugin-cartographer")).cartographer()]
       : []),
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
+        id: "/",
         name: "FlashBrain Study App",
         short_name: "FlashBrain",
-        theme_color: "#4f46e5",
-        background_color: "#ffffff",
+        description: "FlashBrain helps students to Create Digital Flash Cards Easily and Even turns Their Notes into Flash Cards using AI",
+        start_url: "/",
+        scope: "/",
         display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#4f46e5",
         icons: [
           {
             src: "icon-192.png",
@@ -32,10 +34,20 @@ export default defineConfig(async ({ mode }) => {
             sizes: "512x512",
             type: "image/png",
           },
+          {
+            src: "icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable",
+          },
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,png,svg}"],
+        globPatterns: ["**/*.{js,css,html,png,svg,ico,json,txt}"],
+        navigateFallback: "/index.html",
+      },
+      devOptions: {
+        enabled: true,
       },
     }),
   ];
