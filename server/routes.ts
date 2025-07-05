@@ -4,8 +4,6 @@ import { storage } from "./storage";
 import { insertCategorySchema, insertFolderSchema, insertFlashcardSchema, insertStudySessionSchema } from "@shared/schema";
 import { z } from "zod";
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Categories
@@ -131,10 +129,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/flashcards/generate", async (req, res) => {
     try {
       const { text, folderId, maxCards = 20 } = req.body;
-      
+
       if (!text || !folderId) {
         return res.status(400).json({ message: "Text and folder ID are required" });
       }
+
+      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; // <-- Moved here
 
       if (!OPENROUTER_API_KEY) {
         return res.status(500).json({ message: "OpenRouter API key not configured" });
@@ -142,20 +142,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const prompt = `
         Analyze the following study material and generate concise flashcards.
-        
+
         Each flashcard should have:
         - A question and an answer
         - Maximum 10 words per side
         - Focus on key concepts and facts
-        
+
         Generate up to ${maxCards} flashcards.
-        
+
         Return the response as a JSON array in this exact format:
         [
           {"question": "...", "answer": "..."},
           {"question": "...", "answer": "..."}
         ]
-        
+
         Study material:
         ${text}
       `;
@@ -183,25 +183,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const data = await response.json();
       const content = data.choices[0]?.message?.content;
-      
+
       if (!content) {
         throw new Error("No content received from AI");
       }
 
-      // Extract JSON from the response
       const jsonMatch = content.match(/\[[\s\S]*\]/);
       if (!jsonMatch) {
         throw new Error("Could not extract JSON from AI response");
       }
 
       const flashcardData = JSON.parse(jsonMatch[0]);
-      
-      // Create flashcards in the database
       const createdFlashcards = [];
+
       for (const card of flashcardData) {
         if (card.question && card.answer) {
           const flashcard = await storage.createFlashcard({
-            question: card.question.substring(0, 200), // Ensure within limits
+            question: card.question.substring(0, 200),
             answer: card.answer.substring(0, 200),
             folderId: parseInt(folderId),
             cardStyle: "white"
@@ -210,9 +208,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json({ 
-        message: `Generated ${createdFlashcards.length} flashcards`, 
-        flashcards: createdFlashcards 
+      res.json({
+        message: `Generated ${createdFlashcards.length} flashcards`,
+        flashcards: createdFlashcards
       });
 
     } catch (error) {
