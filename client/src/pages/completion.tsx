@@ -50,8 +50,7 @@ export default function Completion() {
       return {
         totalCards: stats.totalCards,
         completedCards: stats.completedCards,
-        durationSeconds: stats.duration, // Raw seconds from useStudySession
-        durationMinutes: Math.floor(stats.duration / 60), // Convert to minutes
+        duration: stats.duration,
         accuracy: stats.accuracy
       };
     }
@@ -59,8 +58,7 @@ export default function Completion() {
     return {
       totalCards: flashcards.length,
       completedCards: 0,
-      durationSeconds: 0,
-      durationMinutes: 0,
+      duration: 0,
       accuracy: 0
     };
   };
@@ -73,7 +71,7 @@ export default function Completion() {
       folderId,
       totalCards: sessionStats.totalCards,
       completedCards: sessionStats.completedCards,
-      duration: sessionStats.durationSeconds, // Raw seconds for database storage
+      duration: sessionStats.duration, // Raw seconds for database storage
       accuracy: sessionStats.accuracy
     };
     
@@ -138,19 +136,9 @@ export default function Completion() {
           <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-8">
             <CardContent className="p-6">
               <h3 className="text-white font-semibold mb-4">Session Summary</h3>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-white text-2xl font-bold">{sessionStats.totalCards}</div>
-                  <div className="text-white/70 text-sm">Cards Reviewed</div>
-                </div>
-                <div>
-                  <div className="text-white text-2xl font-bold">{sessionStats.durationMinutes}m</div>
-                  <div className="text-white/70 text-sm">Minutes</div>
-                </div>
-                <div>
-                  <div className="text-white text-2xl font-bold">{sessionStats.accuracy}%</div>
-                  <div className="text-white/70 text-sm">Accuracy</div>
-                </div>
+              <div className="text-center">
+                <div className="text-white text-4xl font-bold mb-2">{sessionStats.totalCards}</div>
+                <div className="text-white/70 text-lg">Cards Reviewed</div>
               </div>
             </CardContent>
           </Card>
