@@ -4,11 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Plus, Bot, Lightbulb, ChevronRight, ExternalLink, Mail, User, Globe } from "lucide-react";
 import NavigationHeader from "@/components/navigation-header";
+import { useToast } from "@/hooks/use-toast";
 import { apiGet } from "@/lib/api";
 import type { Category, Folder, Flashcard, StudySession } from "@shared/schema";
 
 export default function Home() {
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -242,14 +244,22 @@ export default function Home() {
                   <ExternalLink className="h-3 w-3 ml-auto opacity-60" />
                 </a>
                 
-                <a
-                  href="mailto:sheditzofficial918@gmail.com"
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText('sheditzofficial918@gmail.com');
+                    toast({
+                      title: "Email Copied!",
+                      description: "sheditzofficial918@gmail.com has been copied to clipboard"
+                    });
+                  }}
                   className="flex items-center justify-center w-full p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200 text-white hover:text-white touch-btn"
                 >
                   <Mail className="h-4 w-4 mr-2" />
-                  <span className="text-sm font-medium">Email</span>
-                  <ExternalLink className="h-3 w-3 ml-auto opacity-60" />
-                </a>
+                  <span className="text-sm font-medium">sheditzofficial918@gmail.com</span>
+                  <svg className="h-3 w-3 ml-auto opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
               </div>
               
               <div className="mt-4 pt-4 border-t border-white/20">
