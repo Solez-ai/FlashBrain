@@ -26,27 +26,27 @@ export default defineConfig(async ({ mode }) => {
         theme_color: "#4f46e5",
         icons: [
           {
-            src: "icon-192.png",
+            src: "/icon-192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any",
+            purpose: "any"
           },
           {
-            src: "icon-512.png",
+            src: "/icon-512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any",
+            purpose: "any"
           }
-        ],
+        ]
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,png,svg,ico,json,txt}"],
-        navigateFallback: "/index.html",
+        navigateFallback: "/index.html"
       },
       devOptions: {
-        enabled: true,
-      },
-    }),
+        enabled: true
+      }
+    })
   ];
 
   return {
@@ -55,19 +55,19 @@ export default defineConfig(async ({ mode }) => {
       alias: {
         "@": path.resolve(__dirname, "client", "src"),
         "@shared": path.resolve(__dirname, "shared"),
-        "@assets": path.resolve(__dirname, "attached_assets"),
-      },
+        "@assets": path.resolve(__dirname, "attached_assets")
+      }
     },
     root: path.resolve(__dirname, "client"),
     build: {
       outDir: path.resolve(__dirname, "dist/public"),
-      emptyOutDir: true,
+      emptyOutDir: true
     },
     server: {
       fs: {
         strict: true,
-        deny: ["**/.*"],
-      },
-    },
+        deny: ["**/.*"]
+      }
+    }
   };
 });
