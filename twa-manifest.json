@@ -14,7 +14,6 @@
   "enableNotifications": true,
   "startUrl": "/",
   "iconUrl": "https://flashbrainmobile.netlify.app/icon-512.png",
-  "maskableIconUrl": "https://flashbrainmobile.netlify.app/icon-512-maskable.png",
   "monochromeIconUrl": "https://flashbrainmobile.netlify.app/icon-192.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
